@@ -1,11 +1,10 @@
-const express = require('express');
-
-const router = express.Router();
+const Router = require('express');
+const router = new Router();
 
 const studentRoutes = require('./../routes/students.js');
-const todosRoutes = require('./../routes/todos.js');
+const schoolRoutes = require('./../routes/school.js');
 
 router.use('/students', studentRoutes);
-router.use('/todos', todosRoutes);
+router.use('/school', schoolRoutes);
 
 module.exports = router;

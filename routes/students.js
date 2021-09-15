@@ -1,16 +1,15 @@
-const express = require('express');
+// const express = require('express');
+const Router = require('express');
 const { v4: uuidv4 } = require('uuid');
-
-const router = express.Router();
+const router = new Router();
 
 let students = [];
 
 router.get('/', (req, res) => {
   res.set({
-    'Content-Type': 'application/json',
-    Authorization: 'Bearer gfbhj[ou345jgihfodgsih[dfighdsfghfdosu[gh',
+    'Content-Type': 'text/html',
   });
-  res.status(200).json(students);
+  res.status(200).send('<img src="/static/images/earth.jpeg" />');
 });
 
 router.get('/:id', (req, res) => {
