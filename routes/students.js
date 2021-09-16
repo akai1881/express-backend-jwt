@@ -2,50 +2,25 @@
 const Router = require('express');
 const { v4: uuidv4 } = require('uuid');
 const StudentController = require('../controllers/studentController.js');
+const { body } = require('express-validator');
+const authMiddleware = require('../middlewares/auth-middleware.js');
 const router = new Router();
 
 router.get('/', StudentController.getAll);
 
-router.get('/:id', StudentController.getOne);
+router.get('/:id', authMiddleware, StudentController.getOne);
 
-router.patch('/:id', StudentController.update);
+router.patch('/:id', authMiddleware, StudentController.update);
 
 router.delete('/:id', StudentController.delete);
 
-router.post('/signup', StudentController.signup);
+router.post(
+  '/signup',
+  body('email').isEmail(),
+  body('password').isLength({ min: 5, max: 20 }),
+  StudentController.signup
+);
 
-router.post('/login', StudentController.login);
-
-// router.patch('/:id', (req, res) => {
-//   const { id } = req.params;
-
-//   const body = req.body;
-
-//   const foundIndex = students.findIndex((s) => s.id === id);
-
-//   if (foundIndex === -1) {
-//     return res.status(404).json({ msg: 'Student not found' });
-//   }
-
-//   const student = students[foundIndex];
-
-//   const updatedStudent = {
-//     ...student,
-//     ...body,
-//     id: student.id,
-//   };
-
-//   students[foundIndex] = updatedStudent;
-
-//   res.status(200).json({ msg: 'Updated student', data: updatedStudent });
-// });
-
-// router.delete('/:id', (req, res) => {
-//   const { id } = req.params;
-
-//   students = students.filter((s) => s.id !== id);
-
-//   res.status(200).json({ msg: 'Student was deleted' });
-// });
+router.post('/login', body('email').isEmail(), body('password').isLength({ min: 5, max: 20 }), StudentController.login);
 
 module.exports = router;

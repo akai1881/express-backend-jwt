@@ -9,6 +9,8 @@ const app = express();
 
 const routes = require('./routes/index.js');
 
+const errorMiddleware = require('./middlewares/error-middleware.js');
+
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -17,6 +19,7 @@ app.use(morgan('tiny'));
 
 // ! UNION ROUTING SYSTEM
 app.use('/api/v1', routes);
+app.use(errorMiddleware);
 
 const run = async () => {
   try {
