@@ -1,4 +1,9 @@
+require('dotenv').config();
 const { Student, School } = require('../models/index.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const { SECRET_KEY } = process.env;
 
 class StudentController {
   static getAll = async (req, res) => {
@@ -41,13 +46,48 @@ class StudentController {
     }
   };
 
-  static create = async (req, res) => {
+  static signup = async (req, res) => {
     try {
-      const { email, password, firstName, lastName, schoolId } = req.body;
+      const { email, password, firstName, lastName } = req.body;
 
-      const student = await Student.create({ email, password, firstName, lastName, schoolId });
+      if (!email || !password) {
+        return res.status(400).json({ message: 'Введите или пароль' });
+      }
 
-      return res.json(student);
+      const oldStudent = await Student.findOne({ where: { email } });
+
+      if (oldStudent) {
+        return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
+      }
+
+      const hashPassword = await bcrypt.hash(password, 3);
+
+      const student = await Student.create({ email, password: hashPassword, firstName, lastName });
+      const token = jwt.sign({ id: student.id, email }, SECRET_KEY, { expiresIn: '5h' });
+      return res.json({ token });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  static login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const student = await Student.findOne({ where: { email } });
+
+      if (!student) {
+        return res.status(404).json({ message: 'Пользователь с таким email не найден' });
+      }
+
+      const comparePassword = await bcrypt.compareSync(password, student.password);
+
+      if (!comparePassword) {
+        return res.status(403).json({ message: 'Неверный пароль' });
+      }
+
+      const token = jwt.sign({ id: student.id, email }, SECRET_KEY, { expiresIn: '5h' });
+      return res.json({ token });
     } catch (e) {
       console.log(e);
     }

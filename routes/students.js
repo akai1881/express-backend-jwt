@@ -8,11 +8,13 @@ router.get('/', StudentController.getAll);
 
 router.get('/:id', StudentController.getOne);
 
-router.post('/', StudentController.create);
-
 router.patch('/:id', StudentController.update);
 
 router.delete('/:id', StudentController.delete);
+
+router.post('/signup', StudentController.signup);
+
+router.post('/login', StudentController.login);
 
 // router.patch('/:id', (req, res) => {
 //   const { id } = req.params;
