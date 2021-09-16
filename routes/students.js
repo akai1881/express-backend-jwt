@@ -1,72 +1,49 @@
 // const express = require('express');
 const Router = require('express');
 const { v4: uuidv4 } = require('uuid');
+const StudentController = require('../controllers/studentController.js');
 const router = new Router();
 
-let students = [];
+router.get('/', StudentController.getAll);
 
-router.get('/', (req, res) => {
-  res.set({
-    'Content-Type': 'text/html',
-  });
-  res.status(200).send('<img src="/static/images/earth.jpeg" />');
-});
+router.get('/:id', StudentController.getOne);
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  const student = students.find((s) => s.id === id);
+router.post('/', StudentController.create);
 
-  if (!student) {
-    return res.status(404).json({ msg: 'Student with given id not found' });
-  }
+router.patch('/:id', StudentController.update);
 
-  res.status(200).json({ data: student });
-});
+router.delete('/:id', StudentController.delete);
 
-router.post('/', (req, resp) => {
-  const { name, age } = req.body;
+// router.patch('/:id', (req, res) => {
+//   const { id } = req.params;
 
-  const newStudent = {
-    name,
-    age,
-    id: uuidv4(),
-  };
+//   const body = req.body;
 
-  students.push(newStudent);
+//   const foundIndex = students.findIndex((s) => s.id === id);
 
-  resp.status(200).json({ message: 'OK', data: newStudent });
-});
+//   if (foundIndex === -1) {
+//     return res.status(404).json({ msg: 'Student not found' });
+//   }
 
-router.patch('/:id', (req, res) => {
-  const { id } = req.params;
+//   const student = students[foundIndex];
 
-  const body = req.body;
+//   const updatedStudent = {
+//     ...student,
+//     ...body,
+//     id: student.id,
+//   };
 
-  const foundIndex = students.findIndex((s) => s.id === id);
+//   students[foundIndex] = updatedStudent;
 
-  if (foundIndex === -1) {
-    return res.status(404).json({ msg: 'Student not found' });
-  }
+//   res.status(200).json({ msg: 'Updated student', data: updatedStudent });
+// });
 
-  const student = students[foundIndex];
+// router.delete('/:id', (req, res) => {
+//   const { id } = req.params;
 
-  const updatedStudent = {
-    ...student,
-    ...body,
-    id: student.id,
-  };
+//   students = students.filter((s) => s.id !== id);
 
-  students[foundIndex] = updatedStudent;
-
-  res.status(200).json({ msg: 'Updated student', data: updatedStudent });
-});
-
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-
-  students = students.filter((s) => s.id !== id);
-
-  res.status(200).json({ msg: 'Student was deleted' });
-});
+//   res.status(200).json({ msg: 'Student was deleted' });
+// });
 
 module.exports = router;

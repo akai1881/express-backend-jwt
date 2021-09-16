@@ -15,7 +15,7 @@ const School = sequelize.define('school', {
   adress: { type: DataTypes.STRING },
 });
 
-School.hasMany(Student, { onDelete: 'CASCADE' });
+School.hasMany(Student, { onDelete: 'cascade' });
 Student.belongsTo(School);
 
 module.exports = {

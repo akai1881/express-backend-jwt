@@ -1,4 +1,4 @@
-const { School } = require('./../models/index.js');
+const { School, Student } = require('./../models/index.js');
 
 class SchoolController {
   static getAll = async (req, res) => {
@@ -52,6 +52,26 @@ class SchoolController {
       const school = await School.destroy({ where: { id } });
 
       return res.json({ msg: 'successfully deleted', data: school });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  static getAllStudent = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const students = await School.findOne({
+        where: { id },
+        attributes: ['name', 'id'],
+        include: {
+          model: Student,
+          as: 'students',
+          attributes: ['firstName', 'lastName', 'id'],
+        },
+      });
+
+      return res.json(students);
     } catch (e) {
       console.log(e);
     }
